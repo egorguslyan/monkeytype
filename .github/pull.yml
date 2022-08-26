@@ -9,10 +9,6 @@ rules:
     upstream: wei:master
     mergeMethod: merge
     mergeUnstable: false
-  - base: arduino
-    upstream: wei:master
-    mergeMethod: merge
-    mergeUnstable: false
     
 label: ":arrow_heading_down: pull"  # Optional
 conflictLabel: "merge-conflict"
