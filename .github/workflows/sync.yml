@@ -14,6 +14,9 @@ jobs:
         with:
           base: systemverilog
           head: master
+          ignore_fail: true
+          retries: 1
+          retry_after: 5
   sync-c:
     runs-on: ubuntu-latest
     steps:
@@ -22,3 +25,6 @@ jobs:
         with:
           base: c
           head: master
+          ignore_fail: true
+          retries: 1
+          retry_after: 5
