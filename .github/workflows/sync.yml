@@ -11,13 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: tgymnich/fork-sync@v1.6.3
+      - uses: tgymnich/fork-sync@v1.4
         with:
-          github_token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.PERSONAL_TOKEN }}
           base: systemverilog
           head: master
-      - uses: tgymnich/fork-sync@v1.6.3
+      - uses: tgymnich/fork-sync@v1.4
         with:
-          github_token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.PERSONAL_TOKEN }}
           base: c
           head: master
