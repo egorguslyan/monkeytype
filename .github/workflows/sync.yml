@@ -6,16 +6,17 @@ on:
   workflow_dispatch: # on button click
 
 jobs:
-  sync:
-
+  sync-systemverilog:
     runs-on: ubuntu-latest
-
     steps:
       - uses: tgymnich/fork-sync@v1.6.3
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
           base: systemverilog
           head: master
+  sync-c:
+    runs-on: ubuntu-latest
+    steps:
       - uses: tgymnich/fork-sync@v1.6.3
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
