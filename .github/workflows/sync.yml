@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: tgymnich/fork-sync@v1.6.3
+        timeout-minutes: 1
         with:
           base: systemverilog
           head: master
@@ -17,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: tgymnich/fork-sync@v1.6.3
+        timeout-minutes: 1
         with:
           base: c
           head: master
