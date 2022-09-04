@@ -17,3 +17,14 @@ jobs:
           ignore_fail: true
           retries: 1
           retry_after: 5
+  sync-numbers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tgymnich/fork-sync@v1.6.3
+        timeout-minutes: 1
+        with:
+          base: numbers
+          head: master
+          ignore_fail: true
+          retries: 1
+          retry_after: 5
