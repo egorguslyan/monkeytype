@@ -6,13 +6,13 @@ on:
   workflow_dispatch: # on button click
 
 jobs:
-  sync-c:
+  sync-funboxes:
     runs-on: ubuntu-latest
     steps:
       - uses: tgymnich/fork-sync@v1.6.3
         timeout-minutes: 1
         with:
-          base: c
+          base: funboxes
           head: master
           ignore_fail: true
           retries: 1
