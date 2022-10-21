@@ -544,6 +544,22 @@ export const Funboxes: MonkeyTypes.FunboxObject[] = [
       return new Misc.Wordset([]);
     },
   },
+  {
+    name: "polyglot",
+    info: "Type на verschiedenen γλώσσες",
+    ignoresLanguage: true,
+    ignoresLayout: true,
+    getResultContent(): string {
+      return Config.polyglotLanguages.replace(/#/g, " ").replace(/_/g, " ");
+    },
+    async withWords(): Promise<Misc.Wordset> {
+      let ws: string[] = [];
+      for (const l of Config.polyglotLanguages.split("#")) {
+        ws = ws.concat((await Misc.getLanguage(l)).words);
+      }
+      return new Misc.Wordset(ws);
+    },
+  },
 ];
 
 let memoryTimer: number | null = null;

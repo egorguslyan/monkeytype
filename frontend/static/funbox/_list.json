@@ -134,6 +134,11 @@
     "name": "pseudolang",
     "type": "wordlist",
     "info": "Nonsense words that look like the current language."
+  },
+  {
+    "name": "polyglot",
+    "type": "wordlist",
+    "info": "Type на verschiedenen γλώσσες"
   }
 ]
 
