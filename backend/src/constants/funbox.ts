@@ -213,6 +213,14 @@ const Funboxes: MonkeyTypes.FunboxObject[] = [
     unspeakable: true,
     withWords: true,
   },
+  {
+    name: "polyglot",
+    info: "Type на verschiedenen γλώσσες",
+    ignoresLanguage: true,
+    ignoresLayout: true,
+    getResultContent: true,
+    withWords: true,
+  },
 ];
 
 export default Funboxes;
