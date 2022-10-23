@@ -12,7 +12,9 @@ type PossibleType =
   | string[]
   | number[];
 
-type PossibleTypeAsync = "layoutfluid";
+type PossibleTypeAsync =
+  | "layoutfluid"
+  | "polyglot";
 
 export function isConfigKeyValid(name: string): boolean {
   if (name === null || name === undefined || name === "") return false;
@@ -133,6 +135,40 @@ export async function isConfigValueValidAsync(
             .map(([layoutName]) => layoutName);
 
           customMessage = `The following inputted layouts do not exist: ${invalidLayouts.join(
+            ", "
+          )}`;
+
+          break;
+        }
+
+        isValid = true;
+
+        break;
+      }
+      case "polyglot": {
+        if (typeof val !== "string") break;
+
+        const languageNames = val.split(/[# ]+/);
+
+        if (languageNames.length < 2 || languageNames.length > 5) break;
+
+        // convert the language names to languages
+        const languages = await Promise.all(
+          languageNames.map(async (language) => Misc.getLanguage(language, true))
+        );
+
+        // check if all layouts exist
+        if (!languages.every((language) => language !== undefined)) {
+          const invalidLanguageNames = languageNames.map((languageName, index) => [
+            languageName,
+            languages[index],
+          ]);
+
+          const invalidLanguages = invalidLanguageNames
+            .filter(([_, language]) => typeof(language) == "string" ? language == "undefined" : language.name == "undefined")
+            .map(([languageName]) => languageName);
+
+          customMessage = `The following inputted languages do not exist: ${invalidLanguages.join(
             ", "
           )}`;
 

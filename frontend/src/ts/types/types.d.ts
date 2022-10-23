@@ -151,13 +151,20 @@ declare namespace MonkeyTypes {
 
   type IndicateTypos = "off" | "below" | "replace";
 
-  type CustomLayoutFluid = `${string}#${string}#${string}`;
-
   type ArrowKeys = `${string}`;
+
+  type CustomLayoutFluid = `${string}#${string}#${string}`;
 
   type CustomLayoutFluidSpaces =
     | CustomLayoutFluid
     | `${string} ${string} ${string}`;
+
+    type PolyglotLanguages = `${string}#${string}`;
+  
+    type PolyglotLanguagesSpaces =
+      | PolyglotLanguages
+      | `${string}, ${string}`;
+
 
   interface HistoryChartData {
     x: number;
@@ -451,7 +458,7 @@ declare namespace MonkeyTypes {
     customBackgroundSize: CustomBackgroundSize;
     customBackgroundFilter: CustomBackgroundFilter;
     customLayoutfluid: CustomLayoutFluid;
-    polyglotLanguages: string;
+    polyglotLanguages: PolyglotLanguages;
     arrowKeys: ArrowKeys;
     monkeyPowerLevel: MonkeyPowerLevel;
     minBurst: MinimumBurst;

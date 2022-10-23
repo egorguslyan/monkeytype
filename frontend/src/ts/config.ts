@@ -1658,6 +1658,36 @@ export async function setCustomLayoutfluid(
   return true;
 }
 
+export async function setPolyglotLanguages(
+  value: MonkeyTypes.PolyglotLanguagesSpaces,
+  nosave?: boolean
+): Promise<boolean> {
+  const trimmed = value.trim().replace(
+    /, /g,
+    "#"
+  ).replace(
+    / /g,
+    "_"
+  );
+
+  if (
+    !(await isConfigValueValidAsync("polyglot", trimmed, ["polyglot"]))
+  ) {
+    return false;
+  }
+
+  const polyglotLanguages = trimmed as MonkeyTypes.PolyglotLanguages;
+
+  config.polyglotLanguages = polyglotLanguages;
+  $(".pageSettings .section.polyglotLanguages input").val(
+    polyglotLanguages.replace(/#/g, ", ").replace(/_/g, " ")
+  );
+  saveToLocalStorage("polyglotLanguages", nosave);
+  ConfigEvent.dispatch("polyglotLanguages", config.polyglotLanguages);
+
+  return true;
+}
+
 export function setCustomBackgroundSize(
   value: MonkeyTypes.CustomBackgroundSize,
   nosave?: boolean
@@ -1752,6 +1782,7 @@ export function apply(
       true
     );
     setCustomLayoutfluid(configObj.customLayoutfluid, true);
+    setPolyglotLanguages(configObj.polyglotLanguages, true);
     setCustomBackground(configObj.customBackground, true);
     setCustomBackgroundSize(configObj.customBackgroundSize, true);
     setCustomBackgroundFilter(configObj.customBackgroundFilter, true);

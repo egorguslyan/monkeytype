@@ -537,6 +537,10 @@ export async function fillSettingsPage(): Promise<void> {
     Config.customLayoutfluid.replace(/#/g, " ")
   );
 
+  $(".pageSettings .section.polyglotLanguages input").val(
+    Config.polyglotLanguages.replace(/#/g, ", ").replace(/_/g, " ")
+  );
+
   setEventDisabled(true);
   if (!groupsInitialized) {
     await initGroups();
@@ -1018,6 +1022,37 @@ $(".pageSettings .section.customLayoutfluid .inputAndButton .input").keypress(
       ).then((bool) => {
         if (bool) {
           Notifications.add("Custom layoutfluid saved", 1);
+        }
+      });
+    }
+  }
+);
+
+$(".pageSettings .section.polyglotLanguages .inputAndButton .save").on(
+  "click",
+  () => {
+    UpdateConfig.setPolyglotLanguages(
+      $(
+        ".pageSettings .section.polyglotLanguages .inputAndButton input"
+      ).val() as MonkeyTypes.PolyglotLanguagesSpaces
+    ).then((bool) => {
+      if (bool) {
+        Notifications.add("Polyglot languages saved", 1);
+      }
+    });
+  }
+);
+
+$(".pageSettings .section.polyglotLanguages .inputAndButton .input").keypress(
+  (e) => {
+    if (e.key === "Enter") {
+      UpdateConfig.setPolyglotLanguages(
+        $(
+          ".pageSettings .section.polyglotLanguages .inputAndButton input"
+        ).val() as MonkeyTypes.PolyglotLanguagesSpaces
+      ).then((bool) => {
+        if (bool) {
+          Notifications.add("Polyglot languages saved", 1);
         }
       });
     }

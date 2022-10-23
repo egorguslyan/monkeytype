@@ -109,6 +109,7 @@ const CONFIG_SCHEMA = joi.object({
   customBackgroundSize: joi.string().valid("cover", "contain", "max"),
   customBackgroundFilter: joi.array().items(joi.number()),
   customLayoutfluid: joi.string(),
+  polyglotLanguages: joi.string(),
   monkeyPowerLevel: joi.string().valid("off", "1", "2", "3", "4"),
   minBurst: joi.string().valid("off", "fixed", "flex"),
   minBurstCustomSpeed: joi.number().min(0),

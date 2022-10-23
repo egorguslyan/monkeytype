@@ -549,8 +549,23 @@ export const Funboxes: MonkeyTypes.FunboxObject[] = [
     info: "Type на verschiedenen γλώσσες",
     ignoresLanguage: true,
     ignoresLayout: true,
+    applyConfig(): void {
+      UpdateConfig.setLanguage(
+        Config.polyglotLanguages
+          ? Config.polyglotLanguages.split("#")[0]
+          : "english",
+        true
+      );
+    },
+    rememberSettings(): void {
+      rememberSetting(
+        "language",
+        Config.language,
+        UpdateConfig.setLanguage
+      );
+    },
     getResultContent(): string {
-      return Config.polyglotLanguages.replace(/#/g, " ").replace(/_/g, " ");
+      return Config.polyglotLanguages.replace(/#/g, ", ").replace(/_/g, " ");
     },
     async withWords(): Promise<Misc.Wordset> {
       let ws: string[] = [];
@@ -559,6 +574,9 @@ export const Funboxes: MonkeyTypes.FunboxObject[] = [
       }
       return new Misc.Wordset(ws);
     },
+    restart(): void {
+      if (this.applyConfig) this.applyConfig();
+    }
   },
 ];
 

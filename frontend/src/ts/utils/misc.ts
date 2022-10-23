@@ -231,7 +231,8 @@ export async function getLanguageGroups(): Promise<
 
 let currentLanguage: MonkeyTypes.LanguageObject;
 export async function getLanguage(
-  lang: string
+  lang: string,
+  returnUndefined?: boolean
 ): Promise<MonkeyTypes.LanguageObject> {
   try {
     if (currentLanguage == undefined || currentLanguage.name !== lang) {
@@ -244,6 +245,15 @@ export async function getLanguage(
   } catch (e) {
     console.error(`error getting language`);
     console.error(e);
+    if (returnUndefined) {
+      const l: MonkeyTypes.LanguageObject = {
+        name: "undefined",
+        leftToRight: true,
+        words: [],
+        accents: [],
+      };
+      return l;
+    }
     await $.getJSON(`/./languages/english.json`, function (data) {
       currentLanguage = data;
     });

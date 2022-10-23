@@ -199,6 +199,24 @@ export const commands: MonkeyTypes.CommandsSubgroup = {
         }
       },
     },
+    {
+      id: "changePolyglotLanguages",
+      display: "Polyglot languages...",
+      defaultValue: (): string => {
+        return Config.polyglotLanguages;
+      },
+      input: true,
+      icon: "fa-tint",
+      exec: (input): void => {
+        if (input === undefined) return;
+        UpdateConfig.setPolyglotLanguages(
+          input as MonkeyTypes.PolyglotLanguagesSpaces
+        );
+        if (Config.funbox.split("#").includes("polyglot")) {
+          TestLogic.restart();
+        }
+      },
+    },
 
     //input
     ...FreedomModeCommands,
