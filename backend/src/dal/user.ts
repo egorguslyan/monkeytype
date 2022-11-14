@@ -1,13 +1,12 @@
 import _ from "lodash";
 import { isUsernameValid } from "../utils/validation";
 import { updateUserEmail } from "../utils/auth";
-import { checkAndUpdatePb } from "../utils/pb";
+import { canGetPb, checkAndUpdatePb } from "../utils/pb";
 import * as db from "../init/db";
 import MonkeyError from "../utils/error";
 import { Collection, ObjectId, WithId, Long, UpdateFilter } from "mongodb";
 import Logger from "../utils/logger";
 import { flattenObjectDeep, isToday, isYesterday } from "../utils/misc";
-import Funboxes from "../constants/funbox";
 
 const SECONDS_PER_HOUR = 3600;
 
@@ -347,30 +346,9 @@ export async function checkIfPb(
   user: MonkeyTypes.User,
   result: MonkeyTypes.Result<MonkeyTypes.Mode>
 ): Promise<boolean> {
-  const { mode, funbox } = result;
+  const { mode } = result;
 
-  const funboxes = Funboxes.filter(
-    (f) => funbox?.split("#").find((F) => F === f.name) !== undefined
-  );
-  if (
-    funboxes.filter(
-      (f) =>
-        f.alterText ||
-        f.changesCapitalisation ||
-        f.getWord ||
-        f.handleChar ||
-        f.handleKeydown ||
-        f.handleSpace ||
-        f.ignoresLanguage ||
-        f.isCharCorrect ||
-        f.preventDefaultEvent ||
-        f.pullSection ||
-        f.punctuateWord ||
-        f.withWords
-    ).length > 0
-  ) {
-    return false;
-  }
+  if (!canGetPb(result)) return false;
 
   if (mode === "quote") {
     return false;
@@ -416,29 +394,8 @@ export async function checkIfTagPb(
     return [];
   }
 
-  const { mode, tags: resultTags, funbox } = result;
-  const funboxes = Funboxes.filter(
-    (f) => funbox?.split("#").find((F) => F === f.name) !== undefined
-  );
-  if (
-    funboxes.filter(
-      (f) =>
-        f.alterText ||
-        f.changesCapitalisation ||
-        f.getWord ||
-        f.handleChar ||
-        f.handleKeydown ||
-        f.handleSpace ||
-        f.ignoresLanguage ||
-        f.isCharCorrect ||
-        f.preventDefaultEvent ||
-        f.pullSection ||
-        f.punctuateWord ||
-        f.withWords
-    ).length > 0
-  ) {
-    return [];
-  }
+  const { mode, tags: resultTags } = result;
+  if (!canGetPb(result)) return [];
 
   if (mode === "quote") {
     return [];

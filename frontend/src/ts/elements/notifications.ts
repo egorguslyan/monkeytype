@@ -144,7 +144,7 @@ class Notification {
     } else if (this.type === "banner") {
       let leftside = `<div class="icon lefticon">${icon}</div>`;
 
-      if (/^images\/.*/.test(this.customIcon as string)) {
+      if (/images\/.*/.test(this.customIcon as string)) {
         leftside = `<div class="image" style="background-image: url(${this.customIcon})"></div>`;
       }
 
@@ -177,6 +177,15 @@ class Notification {
             this.closeCallback();
           }
         );
+      }
+      // NOTE: This need to be changed if the update banner text is changed
+      if (this.message.includes("please refresh")) {
+        // add pointer when refresh is needed
+        $(`#bannerCenter .banner[id='${this.id}']`).css("cursor", "pointer");
+        // refresh on clicking banner
+        $(`#bannerCenter .banner[id='${this.id}']`).on("click", () => {
+          window.location.reload();
+        });
       }
     }
     if (this.duration > 0) {

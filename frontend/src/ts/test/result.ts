@@ -1,5 +1,5 @@
 import * as TestUI from "./test-ui";
-import Config, { ActiveFunboxes } from "../config";
+import Config from "../config";
 import * as Misc from "../utils/misc";
 import * as TestStats from "./test-stats";
 import * as Keymap from "../elements/keymap";
@@ -19,6 +19,7 @@ import * as TestConfig from "./test-config";
 import { Chart } from "chart.js";
 import { Auth } from "../firebase";
 import * as SlowTimer from "../states/slow-timer";
+import { ActiveFunboxes } from "./funbox";
 
 // eslint-disable-next-line no-duplicate-imports -- need to ignore because eslint doesnt know what import type is
 import type { PluginChartOptions, ScaleChartOptions } from "chart.js";
@@ -102,8 +103,8 @@ async function updateGraph(): Promise<void> {
     let content = "";
     for (const f of ActiveFunboxes()) {
       content += f.name;
-      if (f.getResultContent) {
-        content += "(" + f.getResultContent() + ")";
+      if (f.functions?.getResultContent) {
+        content += "(" + f.functions.getResultContent() + ")";
       }
       content += " ";
     }
@@ -530,7 +531,8 @@ function updateTestType(randomQuote: MonkeyTypes.Quote): void {
     }
   }
   const ignoresLanguage =
-    ActiveFunboxes().find((f) => f.ignoresLanguage) !== undefined;
+    ActiveFunboxes().find((f) => f.properties?.includes("ignoresLanguage")) !==
+    undefined;
   if (Config.mode != "custom" && !ignoresLanguage) {
     testType += "<br>" + result.language.replace(/_/g, " ");
   }

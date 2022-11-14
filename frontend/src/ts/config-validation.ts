@@ -12,9 +12,7 @@ type PossibleType =
   | string[]
   | number[];
 
-type PossibleTypeAsync =
-  | "layoutfluid"
-  | "polyglot";
+type PossibleTypeAsync = "layoutfluid" | "polyglot";
 
 export function isConfigKeyValid(name: string): boolean {
   if (name === null || name === undefined || name === "") return false;
@@ -118,6 +116,16 @@ export async function isConfigValueValidAsync(
 
         if (layoutNames.length < 2 || layoutNames.length > 5) break;
 
+        try {
+          await Misc.getLayoutsList();
+        } catch (e) {
+          customMessage = Misc.createErrorMessage(
+            e,
+            "Failed to validate layoutfluid value"
+          );
+          break;
+        }
+
         // convert the layout names to layouts
         const layouts = await Promise.all(
           layoutNames.map(async (layoutName) => Misc.getLayout(layoutName))
@@ -154,18 +162,21 @@ export async function isConfigValueValidAsync(
 
         // convert the language names to languages
         const languages = await Promise.all(
-          languageNames.map(async (language) => Misc.getLanguage(language, true))
+          languageNames.map(async (language) => Misc.getLanguage(language))
         );
 
         // check if all layouts exist
         if (!languages.every((language) => language !== undefined)) {
-          const invalidLanguageNames = languageNames.map((languageName, index) => [
-            languageName,
-            languages[index],
-          ]);
+          const invalidLanguageNames = languageNames.map(
+            (languageName, index) => [languageName, languages[index]]
+          );
 
           const invalidLanguages = invalidLanguageNames
-            .filter(([_, language]) => typeof(language) == "string" ? language == "undefined" : language.name == "undefined")
+            .filter(([_, language]) =>
+              typeof language == "string"
+                ? language == "undefined"
+                : language.name == "undefined"
+            )
             .map(([languageName]) => languageName);
 
           customMessage = `The following inputted languages do not exist: ${invalidLanguages.join(

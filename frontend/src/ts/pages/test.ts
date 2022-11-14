@@ -5,6 +5,8 @@ import * as TestLogic from "../test/test-logic";
 import * as Funbox from "../test/funbox";
 import Page from "./page";
 import { updateTestPageAds } from "../controllers/ad-controller";
+import * as ModesNotice from "../elements/modes-notice";
+import * as Keymap from "../elements/keymap";
 
 export const page = new Page(
   "test",
@@ -13,6 +15,7 @@ export const page = new Page(
   async () => {
     TestLogic.restart();
     Funbox.clear();
+    ModesNotice.update();
     $("#wordsInput").focusout();
   },
   async () => {
@@ -26,6 +29,7 @@ export const page = new Page(
       noAnim: true,
     });
     Funbox.activate();
+    Keymap.refresh();
   },
   async () => {
     TestUI.focusWords();

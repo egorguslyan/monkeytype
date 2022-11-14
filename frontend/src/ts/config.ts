@@ -12,7 +12,6 @@ import { Auth } from "./firebase";
 import * as AnalyticsController from "./controllers/analytics-controller";
 import * as AccountButton from "./elements/account-button";
 import { debounce } from "throttle-debounce";
-import { Funboxes } from "./test/funbox";
 
 export let localStorageConfig: MonkeyTypes.Config;
 export let dbConfigLoaded = false;
@@ -126,19 +125,6 @@ export function setMode(mode: MonkeyTypes.Mode, nosave?: boolean): boolean {
     return false;
   }
 
-  if (mode !== "words") {
-    const funbox = ActiveFunboxes().find((f) => f.mode == "words");
-    if (funbox) {
-      Notifications.add(
-        `${funbox.name.replace(
-          /_/g,
-          " "
-        )} funbox can only be used with words mode.`,
-        0
-      );
-      return false;
-    }
-  }
   const previous = config.mode;
   config.mode = mode;
   if (config.mode == "custom") {
@@ -850,13 +836,6 @@ export function setHighlightMode(
     !isConfigValueValid("highlight mode", mode, [["off", "letter", "word"]])
   ) {
     return false;
-  }
-
-  if (mode === "word") {
-    if (ActiveFunboxes().find((f) => f.blockWordHighlight)) {
-      Notifications.add("Can't use word highlight with this funbox", 0);
-      return false;
-    }
   }
 
   config.highlightMode = mode;
@@ -1662,17 +1641,9 @@ export async function setPolyglotLanguages(
   value: MonkeyTypes.PolyglotLanguagesSpaces,
   nosave?: boolean
 ): Promise<boolean> {
-  const trimmed = value.trim().replace(
-    /, /g,
-    "#"
-  ).replace(
-    / /g,
-    "_"
-  );
+  const trimmed = value.trim().replace(/, /g, "#").replace(/ /g, "_");
 
-  if (
-    !(await isConfigValueValidAsync("polyglot", trimmed, ["polyglot"]))
-  ) {
+  if (!(await isConfigValueValidAsync("polyglot", trimmed, ["polyglot"]))) {
     return false;
   }
 
@@ -1924,14 +1895,5 @@ export function setConfig(newConfig: MonkeyTypes.Config): void {
 export const loadPromise = new Promise((v) => {
   loadDone = v;
 });
-
-export const ActiveFunboxes = (): MonkeyTypes.FunboxObject[] => {
-  const funboxes: MonkeyTypes.FunboxObject[] = [];
-  for (const i of config.funbox.split("#")) {
-    const f = Funboxes.find((f) => f.name === i);
-    if (f) funboxes.push(f);
-  }
-  return funboxes;
-};
 
 export default config;

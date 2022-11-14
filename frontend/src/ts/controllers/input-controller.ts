@@ -2,7 +2,7 @@ import * as TestLogic from "../test/test-logic";
 import * as TestUI from "../test/test-ui";
 import * as TestStats from "../test/test-stats";
 import * as Monkey from "../test/monkey";
-import Config, * as UpdateConfig from "../config";
+import Config from "../config";
 import * as Keymap from "../elements/keymap";
 import * as Misc from "../utils/misc";
 import * as LiveAcc from "../test/live-acc";
@@ -28,6 +28,8 @@ import * as TestWords from "../test/test-words";
 import * as Hangul from "hangul-js";
 import * as CustomTextState from "../states/custom-text-name";
 import { navigate } from "../observables/navigate-event";
+import { ActiveFunboxes } from "../test/funbox";
+import * as Settings from "../pages/settings";
 
 let dontInsertSpace = false;
 let correctShiftUsed = true;
@@ -120,7 +122,7 @@ function backspaceToPrevious(): void {
 
   TestInput.input.current = TestInput.input.popHistory();
   TestInput.corrected.popHistory();
-  if (UpdateConfig.ActiveFunboxes().find((f) => f.nospace)) {
+  if (ActiveFunboxes().find((f) => f.properties?.includes("nospace"))) {
     TestInput.input.current = TestInput.input.current.slice(0, -1);
     setWordsInput(" " + TestInput.input.current + " ");
   }
@@ -146,11 +148,12 @@ function handleSpace(): void {
 
   const currentWord: string = TestWords.words.getCurrent();
 
-  for (const f of UpdateConfig.ActiveFunboxes()) {
-    if (f.handleSpace) {
-      f.handleSpace();
+  for (const f of ActiveFunboxes()) {
+    if (f.functions?.handleSpace) {
+      f.functions.handleSpace();
     }
   }
+  Settings.groups["layout"]?.updateInput();
 
   dontInsertSpace = true;
 
@@ -159,7 +162,8 @@ function handleSpace(): void {
   TestInput.pushBurstToHistory(burst);
 
   const nospace =
-    UpdateConfig.ActiveFunboxes().find((f) => f.nospace) !== undefined;
+    ActiveFunboxes().find((f) => f.properties?.includes("nospace")) !==
+    undefined;
 
   //correct word or in zen mode
   const isWordCorrect: boolean =
@@ -339,9 +343,10 @@ function isCharCorrect(char: string, charIndex: number): boolean {
     }
   }
 
-  const funbox = UpdateConfig.ActiveFunboxes().find((f) => f.isCharCorrect);
-  if (funbox?.isCharCorrect) return funbox.isCharCorrect(char, originalChar);
-
+  const funbox = ActiveFunboxes().find((f) => f.functions?.isCharCorrect);
+  if (funbox?.functions?.isCharCorrect) {
+    return funbox.functions.isCharCorrect(char, originalChar);
+  }
   if (
     (char === "’" || char === "‘" || char === "'") &&
     (originalChar === "’" || originalChar === "‘" || originalChar === "'")
@@ -386,12 +391,13 @@ function handleChar(
     return;
   }
 
-  for (const f of UpdateConfig.ActiveFunboxes()) {
-    if (f.handleChar) char = f.handleChar(char);
+  for (const f of ActiveFunboxes()) {
+    if (f.functions?.handleChar) char = f.functions.handleChar(char);
   }
 
   const nospace =
-    UpdateConfig.ActiveFunboxes().find((f) => f.nospace) !== undefined;
+    ActiveFunboxes().find((f) => f.properties?.includes("nospace")) !==
+    undefined;
 
   if (char !== "\n" && char !== "\t" && /\s/.test(char)) {
     if (nospace) return;
@@ -738,7 +744,7 @@ function handleTab(event: JQuery.KeyDownEvent, popupVisible: boolean): void {
 }
 
 $(document).keydown(async (event) => {
-  if (ActivePage.get() == "loading") return event.preventDefault();
+  if (ActivePage.get() == "loading") return;
 
   //autofocus
   const wordsFocused: boolean = $("#wordsInput").is(":focus");
@@ -843,22 +849,21 @@ $(document).keydown(async (event) => {
   }
 
   if (event.key === "Enter") {
-    if (event.shiftKey && Config.mode == "zen") {
-      TestLogic.finish();
-    } else if (
-      event.shiftKey &&
-      ((Config.mode == "time" && Config.time === 0) ||
-        (Config.mode == "words" && Config.words === 0))
-    ) {
-      TestInput.setBailout(true);
-      TestLogic.finish();
-    } else if (
-      event.shiftKey &&
-      Config.mode == "custom" &&
-      CustomTextState.isCustomTextLong() === true
-    ) {
-      TestInput.setBailout(true);
-      TestLogic.finish();
+    if (event.shiftKey) {
+      if (Config.mode == "zen") {
+        TestLogic.finish();
+      } else if (
+        !Misc.canQuickRestart(
+          Config.mode,
+          Config.words,
+          Config.time,
+          CustomText,
+          CustomTextState.isCustomTextLong() ?? false
+        )
+      ) {
+        TestInput.setBailout(true);
+        TestLogic.finish();
+      }
     } else {
       handleChar("\n", TestInput.input.current.length);
       setWordsInput(" " + TestInput.input.current);
@@ -886,11 +891,9 @@ $(document).keydown(async (event) => {
       (await ShiftTracker.isUsingOppositeShift(event)) !== false;
   }
 
-  const funbox = UpdateConfig.ActiveFunboxes().find(
-    (f) => f.preventDefaultEvent
-  );
-  if (funbox?.preventDefaultEvent) {
-    if (await funbox.preventDefaultEvent(event)) {
+  const funbox = ActiveFunboxes().find((f) => f.functions?.preventDefaultEvent);
+  if (funbox?.functions?.preventDefaultEvent) {
+    if (await funbox.functions.preventDefaultEvent(event)) {
       event.preventDefault();
       handleChar(event.key, TestInput.input.current.length);
       updateUI();

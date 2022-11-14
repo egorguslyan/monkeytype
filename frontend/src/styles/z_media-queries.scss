@@ -499,6 +499,12 @@
         }
       }
     }
+    .group.estimatedWordsTyped {
+      flex-direction: column;
+      .title {
+        margin-right: unset;
+      }
+    }
   }
   .badge::after,
   .badge::before {
@@ -1006,6 +1012,10 @@
 
   #mobileTestConfig {
     display: block;
+  }
+
+  #restartTestButton {
+    display: block !important;
   }
 }
 

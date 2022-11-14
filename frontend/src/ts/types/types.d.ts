@@ -1,3 +1,5 @@
+type typesSeparatedWithHash<T> = T | `${T}#${typesSeparatedWithHash<T>}`;
+
 declare namespace MonkeyTypes {
   type Difficulty = "normal" | "expert" | "master";
 
@@ -141,17 +143,7 @@ declare namespace MonkeyTypes {
 
   type MinimumBurst = "off" | "fixed" | "flex";
 
-  type FunboxObjectType =
-    | "script"
-    | "style"
-    | "wordlist"
-    | "modificator"
-    | "quote"
-    | "minigame";
-
   type IndicateTypos = "off" | "below" | "replace";
-
-  type ArrowKeys = `${string}`;
 
   type CustomLayoutFluid = `${string}#${string}#${string}`;
 
@@ -159,12 +151,9 @@ declare namespace MonkeyTypes {
     | CustomLayoutFluid
     | `${string} ${string} ${string}`;
 
-    type PolyglotLanguages = `${string}#${string}`;
-  
-    type PolyglotLanguagesSpaces =
-      | PolyglotLanguages
-      | `${string}, ${string}`;
+  type PolyglotLanguages = `${string}#${string}`;
 
+  type PolyglotLanguagesSpaces = PolyglotLanguages | `${string}, ${string}`;
 
   interface HistoryChartData {
     x: number;
@@ -198,27 +187,24 @@ declare namespace MonkeyTypes {
     display?: string;
   }
 
-  interface FunboxObject {
-    name: string;
-    info: string;
-    alias?: string;
-    ignoresLanguage?: boolean;
-    noLingatures?: boolean;
-    noLetters?: boolean;
-    changesCapitalisation?: boolean;
-    mode?: MonkeyTypes.Mode;
-    blockWordHighlight?: boolean;
-    nospace?: boolean;
-    noPunctuation?: boolean;
-    noNumbers?: boolean;
-    symmetricChars?: boolean;
-    conflictsWithSymmetricChars?: boolean;
-    toPushCount?: number;
-    changesWordsVisibility?: boolean;
-    speaks?: boolean;
-    unspeakable?: boolean;
-    changesLayout?: boolean;
-    ignoresLayout?: boolean;
+  type FunboxProperty =
+    | "symmetricChars"
+    | "conflictsWithSymmetricChars"
+    | "changesWordsVisibility"
+    | "speaks"
+    | "unspeakable"
+    | "changesLayout"
+    | "ignoresLayout"
+    | "usesLayout"
+    | "ignoresLanguage"
+    | "noLigatures"
+    | "noLetters"
+    | "changesCapitalisation"
+    | "nospace"
+    | `toPush:${number}`
+    | "noInfiniteDuration";
+
+  interface FunboxFunctions {
     getWord?: (wordset?: Misc.Wordset) => string;
     punctuateWord?: (word: string) => string;
     withWords?: (words?: string[]) => Promise<Misc.Wordset>;
@@ -241,6 +227,26 @@ declare namespace MonkeyTypes {
     start?: () => void;
     restart?: () => void;
     getWordHtml?: (char: string, letterTag?: boolean) => string;
+  }
+
+  interface FunboxForcedConfig {
+    [key: string]: ConfigValues[];
+    // punctuation?: boolean;
+    // numbers?: boolean;
+    // highlightMode?: typesSeparatedWithHash<HighlightMode>;
+    // words?: FunboxModeDuration;
+    // time?: FunboxModeDuration;
+  }
+
+  interface FunboxObject {
+    name: string;
+    info: string;
+    canGetPB?: boolean;
+    alias?: string;
+    mode?: MonkeyTypes.Mode[];
+    forcedConfig?: MonkeyTypes.FunboxForcedConfig;
+    properties?: FunboxProperty[];
+    functions?: FunboxFunctions;
   }
 
   interface CustomText {
@@ -459,7 +465,6 @@ declare namespace MonkeyTypes {
     customBackgroundFilter: CustomBackgroundFilter;
     customLayoutfluid: CustomLayoutFluid;
     polyglotLanguages: PolyglotLanguages;
-    arrowKeys: ArrowKeys;
     monkeyPowerLevel: MonkeyPowerLevel;
     minBurst: MinimumBurst;
     minBurstCustomSpeed: number;
