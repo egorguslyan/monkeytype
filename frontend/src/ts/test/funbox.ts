@@ -597,7 +597,12 @@ export const Funboxes: MonkeyTypes.FunboxObject[] = [
     properties: ["ignoresLanguage", "ignoresLayout"],
     functions: {
       applyConfig(): void {
-        UpdateConfig.setLanguage("english", true);
+        UpdateConfig.setLanguage(
+          Config.polyglotLanguages
+            ? Config.polyglotLanguages.split("#")[0]
+            : "english",
+          true
+        );
       },
       rememberSettings(): void {
         rememberSetting("language", Config.language, UpdateConfig.setLanguage);

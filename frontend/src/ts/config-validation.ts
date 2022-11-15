@@ -165,7 +165,7 @@ export async function isConfigValueValidAsync(
           languageNames.map(async (language) => Misc.getLanguage(language))
         );
 
-        // check if all layouts exist
+        // check if all languages exist
         if (!languages.every((language) => language !== undefined)) {
           const invalidLanguageNames = languageNames.map(
             (languageName, index) => [languageName, languages[index]]
@@ -183,6 +183,25 @@ export async function isConfigValueValidAsync(
             ", "
           )}`;
 
+          break;
+        }
+
+        // check if list has dublicates
+        if (
+          new Set(
+            languageNames.map((l) =>
+              l.startsWith("code") ? l : l.split("_")[0]
+            )
+          ).size < languages.length
+        ) {
+          customMessage = `Same languages are not allowed`;
+          break;
+        }
+
+        // check if langs have different typing directions
+        const ltrCount = languages.filter((l) => l.leftToRight).length;
+        if (ltrCount != languages.length && ltrCount != 0) {
+          customMessage = `Languages with different typing directions are not allowed`;
           break;
         }
 
