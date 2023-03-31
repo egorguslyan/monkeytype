@@ -6,13 +6,13 @@ on:
   workflow_dispatch: # on button click
 
 jobs:
-  sync-ip:
+  sync-systemverilog:
     runs-on: ubuntu-latest
     steps:
       - uses: tgymnich/fork-sync@v1.6.3
         timeout-minutes: 1
         with:
-          base: ip
+          base: systemverilog
           head: master
           ignore_fail: true
           retries: 1
